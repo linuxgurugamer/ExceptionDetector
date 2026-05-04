@@ -17,15 +17,12 @@
 
 #region Using Directives
 
+using KSP.Localization;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using KSP.Localization;
-using static KSP.UI.Screens.ApplicationLauncher;
-using UnityEngine.PlayerLoop;
 
 #endregion
 
@@ -39,7 +36,7 @@ namespace ExceptionDetector
         private bool hasPositioned;
         private List<string> message;
         private int msgCount = 20;
-        private Rect position = new Rect(Screen.width * .8f, Screen.height * .1f, Screen.width * .2f, Screen.height * 0.25f);
+        private Rect position = new Rect(Screen.width * .8f, Screen.height * .1f, Screen.width * .5f, Screen.height * 0.25f);
         private string title;
         private GUIStyle titleStyle;
         private GUIStyle listStyle;
@@ -264,11 +261,20 @@ namespace ExceptionDetector
                             ExceptionDetector.UseWhitelist = !ExceptionDetector.UseWhitelist;
                             Config.Save();
                         }
-
+                        GUILayout.FlexibleSpace();
+                        GUILayout.Label("Resizable Window");
                     }
-                    GUILayout.Label(Localizer.Format("#EXCD-05", msgCount), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
-                    GUILayout.Label(Localizer.Format("#EXCD-06", Path.GetFullPath(ExceptionDetector.LogFile)), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
-
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label(Localizer.Format("#EXCD-05", msgCount), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
+                        GUILayout.FlexibleSpace();
+                        GUILayout.Label("drag the right edge, bottom edge, or bottom-right corner");
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label(Localizer.Format("#EXCD-06", Path.GetFullPath(ExceptionDetector.LogFile)), this.titleStyle); //, GUILayout.Width(position.width));
+                        GUILayout.FlexibleSpace();
+                    }
                     if (doScrollView)
                         curPos = GUILayout.BeginScrollView(curPos, false, true);
                     for (int x = 0; x < msgCount; x++)

@@ -111,6 +111,10 @@ namespace ExceptionDetector
         public void Awake()
         {
             Instance = this;
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             InitLog();
             Config.Load();
             DontDestroyOnLoad(this);
@@ -135,7 +139,6 @@ namespace ExceptionDetector
         {
             fiGui = gameObject.AddComponent<IssueGUI>();
 
-            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
             DirectoryInfo source = new DirectoryInfo(directory);
             foreach (FileInfo fi in source.GetFiles())
             {
