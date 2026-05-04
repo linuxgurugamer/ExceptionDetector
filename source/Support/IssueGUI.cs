@@ -20,225 +20,457 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using KSP.Localization;
+using static KSP.UI.Screens.ApplicationLauncher;
+using UnityEngine.PlayerLoop;
 
 #endregion
 
 namespace ExceptionDetector
 {
-	public class IssueGUI : MonoBehaviour
-	{
-		#region Fields
+    public class IssueGUI : MonoBehaviour
+    {
+        #region Fields
 
-		private GUIStyle buttonStyle;
-		private bool hasPositioned;
-		private List<string> message;
-		private int msgCount = 20;
-		private Rect position = new Rect(Screen.width *.8f, Screen.height *.3f, 0, 0);
-		private string title;
-		private GUIStyle titleStyle;
-		private GUIStyle listStyle;
-		private bool initDone = false;
-		private float lastFrameTime = 0.0f;
+        private GUIStyle buttonStyle;
+        private bool hasPositioned;
+        private List<string> message;
+        private int msgCount = 20;
+        private Rect position = new Rect(Screen.width * .8f, Screen.height * .1f, Screen.width * .2f, Screen.height * 0.25f);
+        private string title;
+        private GUIStyle titleStyle;
+        private GUIStyle listStyle;
+        private bool initDone = false;
+        private float lastFrameTime = 0.0f;
 
-		#endregion
+        public static bool isActive = false;
 
-		#region Properties
+        #endregion
 
-		public bool HasBeenUpdated { get; set; }
+        #region Properties
 
-		#endregion
+        public bool HasBeenUpdated { get; set; }
 
-		#region Methods: protected
+        #endregion
 
-		protected void Awake()
-		{
-			try
-			{
-				DontDestroyOnLoad(this);
-				message = new List<string>();
-				for(int x = 1; x <= msgCount; x++)
-				{
-					message.Add(String.Format("{0}: ", x));
-				}
-			}
-			catch (Exception ex)
-			{
-				//Logger.Exception(ex);
-			}
-			//Logger.Log("FirstRunGui was created.");
-		}
+        #region Methods: protected
 
-		protected void OnDestroy()
-		{
-			//Logger.Log("FirstRunGui was destroyed.");
-		}
+        protected void Initmessage()
+        {
+            message = new List<string>();
+            for (int x = 1; x <= msgCount; x++)
+            {
+                message.Add(String.Format("{0}: ", x));
+            }
+        }
 
-		public void OnGUI()
-		{
-			try
-			{
-				if (!initDone)
-				{
-					InitialiseStyles();
-				}
-					this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.title, HighLogic.Skin.window);
-					this.PositionWindow();
-				
-				//UpdateMessages();
-			}
-			catch (Exception ex)
-			{
-				//Logger.Exception(ex);
-			}
-		}
+        protected void Awake()
+        {
+            try
+            {
+                DontDestroyOnLoad(this);
+                Initmessage();
+            }
+            catch (Exception ex)
+            {
+                //Logger.Exception(ex);
+            }
+            //Logger.Log("FirstRunGui was created.");
+        }
 
-		bool isVisible = true;
+        protected void OnDestroy()
+        {
+            //Logger.Log("FirstRunGui was destroyed.");
+        }
 
-		private void Update()
-		{
+        float lastHeight = 0;
+        bool isVisible = false;
+        public void OnGUI()
+        {
+            try
+            {
+                if (!initDone)
+                {
+                    InitialiseStyles();
+                }
+                if (this.position.height > Screen.height * 0.85f)
+                {
+                    doScrollView = true;
+                    this.hasPositioned = false;
+                    this.position.height = Screen.height * 0.85f;
+                }
+                if (lastHeight != Screen.height)
+                {
+                    doScrollView = false;
+                    lastHeight = Screen.height;
+                }
+                if (!isVisible)
+                    this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.title, HighLogic.Skin.window);
+                this.PositionWindow();
 
-			//if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) &&
-			//	Input.GetKeyDown(KeyCode.F2))
-			//{
-			//	isVisible = !isVisible;
-			//}
+                //UpdateMessages();
+            }
+            catch (Exception ex)
+            {
+                //Logger.Exception(ex);
+            }
+        }
 
-			//if (lastFrameTime < Time.time + (1 / 24f)) // 24fps
-			if (lastFrameTime < Time.time + 1)
-			{
-				lastFrameTime = Time.time;
-				UpdateMessages();
-			}
-		}
-		private void UpdateMessages()
-		{
-			if (ExceptionDetector.ExceptionCount.Count() > 2)
-			{
-				var list = ExceptionDetector.ExceptionCount.ToList();
-				list.Sort((x, y) => y.Value.CompareTo(x.Value));
-				for (int x = 0; x < msgCount; x++)
-				{
-					message[x] = x >= list.Count() ? String.Format("{0}", x + 1) : String.Format("{0}:  {1} times : {2}", x + 1, list[x].Value, list[x].Key);
-				}
-			}
-		}
+        bool doScrollView = false;
+        private void Update()
+        {
 
-		protected void Start()
-		{
-			try
-			{
-				
-				this.title = Localizer.Format("#EXCD-name") + " " + Localizer.Format("#EXCD-abbv") + " v" + Version.SText;
-				//this.title = Localizer.Format("#EXCD_ExceptionDetector_6");		// #EXCD_ExceptionDetector_6 = Exception Detector - EXCD
-				// this.message = (this.HasBeenUpdated ? "You have successfully updated KSP-AVC to v" : "You have successfully installed KSP-AVC v") + this.version;
-			}
-			catch (Exception ex)
-			{
-				//Logger.Exception(ex);
-			}
-		}
+            //if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) &&
+            //	Input.GetKeyDown(KeyCode.F2))
+            //{
+            //	isVisible = !isVisible;
+            //}
 
-		#endregion
+            //if (lastFrameTime < Time.time + (1 / 24f)) // 24fps
+            if (lastFrameTime < Time.time + 1)
+            {
+                lastFrameTime = Time.time;
+                UpdateMessages();
+            }
 
-		#region Methods: private
+            ResizerUpdate();
+        }
 
-		private void PositionWindow()
-		{
+        private void UpdateMessages()
+        {
+            if (ExceptionDetector.ExceptionCount.Count() > 2)
+            {
+                var list = ExceptionDetector.ExceptionCount.ToList();
+                list.Sort((x, y) => y.Value.CompareTo(x.Value));
+                for (int x = 0; x < msgCount; x++)
+                {
+                    message[x] = x >= list.Count() ? String.Format("{0}", x + 1) : String.Format("{0}:  {1} times : {2}", x + 1, list[x].Value, list[x].Key);
+                }
+            }
+        }
 
-// if (windowX + windowWidth >= Screen.currentResolution.width)
-// {
-//       windowX = Screen.currentResolution.width * 0.05;
-//       windowWidth = Screen.currentResolution.width * 0.9;
-// }
+        protected void Start()
+        {
+            try
+            {
+                this.title = Localizer.Format("#EXCD-name") + " " + Localizer.Format("#EXCD-abbv");
 
-// if (windowY + windowHeight >= Screen.currentResolution.height)
-// {
-//       windowY = Screen.currentResolution.height * 0.05;
-//       windowHeight = Screen.currentResolution.height * 0.9;
-// }
+                GameEvents.onShowUI.Add(OnShowUI);
+                GameEvents.onHideUI.Add(OnHideUI);
 
-			if (this.hasPositioned || !(this.position.width > 0) || !(this.position.height > 0))
-			{
-				return;
-			}
-			this.position.center = new Vector2(Screen.width * 0.75f, Screen.height *.25f);
-			this.hasPositioned = true;
-		}
+            }
+            catch (Exception ex)
+            {
+                //Logger.Exception(ex);
+            }
+        }
 
-		private void InitialiseStyles()
-		{
-			initDone = true;
-			this.titleStyle = new GUIStyle(HighLogic.Skin.label)
-			{
-				normal =
-					 {
-						  textColor = Color.white
-					 },
-				fontSize = 13,
-				fontStyle = FontStyle.Bold,
-				alignment = TextAnchor.MiddleCenter,
-				stretchWidth = true
-			};
-			listStyle = new GUIStyle(HighLogic.Skin.label)
-			{
-				normal =
-					 {
-						  textColor = Color.white
-					 },
-				fontSize = 13,
-				fontStyle = FontStyle.Bold,
-				alignment = TextAnchor.MiddleLeft,
-				stretchWidth = true
-			};
+        #endregion
 
-			this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-			{
-				normal =
-					 {
-						  textColor = Color.white
-					 }
-			};
-		}
+        #region Methods: private
 
-		private void Window(int id)
-		{
-			try
-			{
-				GUILayout.MaxHeight(Screen.currentResolution.height * .85f);
-				//GUILayout.MaxHeight(Screen.height * .65f);
-				GUILayout.BeginVertical(HighLogic.Skin.box);
+        private void OnShowUI()
+        {
+            isVisible = false;
+        }
 
-				GUILayout.Label(Localizer.Format("#EXCD-05", msgCount), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
-				GUILayout.Label(Localizer.Format("#EXCD-06", Path.GetFullPath(ExceptionDetector.LogFile)), this.titleStyle, GUILayout.Width(Screen.width * 0.2f)); 
+        private void OnHideUI()
+        {
+            isVisible = true;
+        }
 
-				//GUILayout.Label(String.Format("TOP {0} ISSUES", msgCount), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
-				//GUILayout.Label(String.Format("More info availabe at {0}", Path.GetFullPath(ExceptionDetector.LogFile)), this.titleStyle, GUILayout.Width(Screen.width * 0.2f)); 
-				for (int x = 0; x < msgCount; x++)
-				{
-					GUILayout.Label(message[x], this.listStyle, GUILayout.Width(Screen.width * 0.2f));
-				}
-				GUILayout.EndVertical();
-				GUILayout.FlexibleSpace();
-				//GUILayout.
-				if (GUILayout.Button(Localizer.Format("#autoLOC_149410"), this.buttonStyle))
-				{
-					Destroy(this);
-				}
-				
-				GUI.DragWindow();
-			}
-			catch (Exception ex)
-			{
-				//Logger.Exception(ex);
-			}
-		}
+        private void PositionWindow()
+        {
+            // if (windowX + windowWidth >= Screen.currentResolution.width)
+            // {
+            //       windowX = Screen.currentResolution.width * 0.05;
+            //       windowWidth = Screen.currentResolution.width * 0.9;
+            // }
 
-		#endregion
-	}
+            // if (windowY + windowHeight >= Screen.currentResolution.height)
+            // {
+            //       windowY = Screen.currentResolution.height * 0.05;
+            //       windowHeight = Screen.currentResolution.height * 0.9;
+            // }
+
+            if (this.hasPositioned || !(this.position.width > 0) || !(this.position.height > 0))
+            {
+                return;
+            }
+            this.position.center = new Vector2(Screen.width * 0.75f, (Screen.height) / 2);
+            this.hasPositioned = true;
+        }
+
+        private void InitialiseStyles()
+        {
+            initDone = true;
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                     {
+                          textColor = Color.white
+                     },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
+            listStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                     {
+                          textColor = Color.white
+                     },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+                stretchWidth = true
+            };
+
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                     {
+                          textColor = Color.white
+                     }
+            };
+        }
+
+        Vector2 curPos = new Vector2();
+        private void Window(int id)
+        {
+            try
+            {
+                using (new GUILayout.VerticalScope())
+                {
+                    //GUILayout.BeginVertical(HighLogic.Skin.box);
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        if (ExceptionDetector.WordWrap != GUILayout.Toggle(ExceptionDetector.WordWrap, " " + Localizer.Format("#EXCD-09")))
+                        {
+                            ExceptionDetector.WordWrap = !ExceptionDetector.WordWrap;
+                            Config.Save();
+                        }
+                        if (ExceptionDetector.FixedWidth != GUILayout.Toggle(ExceptionDetector.FixedWidth, " " + Localizer.Format("#EXCD-10")))
+                        {
+                            ExceptionDetector.FixedWidth = !ExceptionDetector.FixedWidth;
+                            Config.Save();
+                        }
+                        if (ExceptionDetector.UseWhitelist != GUILayout.Toggle(ExceptionDetector.UseWhitelist, " " + Localizer.Format("#EXCD-11")))
+                        {
+                            ExceptionDetector.UseWhitelist = !ExceptionDetector.UseWhitelist;
+                            Config.Save();
+                        }
+
+                    }
+                    GUILayout.Label(Localizer.Format("#EXCD-05", msgCount), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
+                    GUILayout.Label(Localizer.Format("#EXCD-06", Path.GetFullPath(ExceptionDetector.LogFile)), this.titleStyle, GUILayout.Width(Screen.width * 0.2f));
+
+                    if (doScrollView)
+                        curPos = GUILayout.BeginScrollView(curPos, false, true);
+                    for (int x = 0; x < msgCount; x++)
+                    {
+                        if (message[x].Length > 5)
+                        {
+                            listStyle.wordWrap = ExceptionDetector.WordWrap;
+                            if (ExceptionDetector.WordWrap && ExceptionDetector.FixedWidth)
+                            {
+                                GUILayout.Label(message[x], this.listStyle, GUILayout.Width(Screen.width * 0.2f - 30f));
+                                //float a = x * listStyle.font.lineHeight;
+                                //Debug.Log("Window height: " + position.height + ", listStyle.font.lineHeight: " + listStyle.font.lineHeight
+                                //    + ", a:" + a);
+                            }
+                            else
+                                GUILayout.Label(message[x], this.listStyle);
+                        }
+                    }
+                    if (doScrollView)
+                        GUILayout.EndScrollView();
+                    //GUILayout.EndVertical();
+                }
+                GUILayout.FlexibleSpace();
+                using (new GUILayout.HorizontalScope())
+                {
+                    if (GUILayout.Button(Localizer.Format("#autoLOC_149410"), this.buttonStyle))
+                    {
+                        isActive = false;
+                        Destroy(this);
+                    }
+                    if (GUILayout.Button("Reset", this.buttonStyle))
+                    {
+                        ExceptionDetector.ResetLists();
+                        Initmessage();
+                        doScrollView = false;
+                    }
+                }
+                if (resizing == CursorType.Default)
+                    GUI.DragWindow();
+            }
+            catch (Exception ex)
+            {
+                //Logger.Exception(ex);
+            }
+        }
+
+        #endregion
+
+        #region Resizer
+
+        // Resize windows in the Update
+        /// <summary>
+        /// Defines available cursor types
+        /// </summary>
+        public enum CursorType
+        {
+            ResizeNS,
+            ResizeEW,
+            ResizeNSEW,
+            Default
+        }
+        private Vector2 originalMousePosition;
+        private Boolean windowLocked = false;
+        internal CursorType resizing = CursorType.Default;
+        //private int originalWindowHeight, originalWindowWidth;
+        Rect originalWindow;
+        private readonly int minimumHeight = 300;
+        private readonly int minimumWidth = 300;
+        private Dictionary<String, Texture> buttonTextures = new Dictionary<String, Texture>();
+        private readonly String pluginDir = "ExceptionDetector";
+        string activeResizeWindow = "";
+        bool updated = false;
+
+        void CheckForResize(string winName, ref Rect windowRect)
+        {
+            if (updated)
+                return;
+            // Fix reversed y position in mouse coordinates
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.y = Screen.height - mousePos.y;
+            //mousePos.x = Screen.width - mousePos.x;
+
+            /*** Resizing ***/
+
+            //Boolean cursorInVZone = new Rect(windowRect.x, windowRect.yMax - 5, windowRect.width, 5).Contains(mousePos);
+            //Boolean cursorInHZone = new Rect(windowRect.xMax - 5, windowRect.y, 5, windowRect.height).Contains(mousePos);
+
+            Boolean cursorInVZone = false;
+            Boolean cursorInHZone = false;
+            if (mousePos.x >= windowRect.x && mousePos.x <= windowRect.xMax &&
+                mousePos.y >= windowRect.yMax - 5 && mousePos.y <= windowRect.yMax)
+                cursorInVZone = true;
+            if (mousePos.x >= windowRect.xMax - 5 && mousePos.x <= windowRect.xMax &&
+                mousePos.y >= windowRect.y && mousePos.y <= windowRect.yMax)
+                cursorInHZone = true;
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (!windowLocked && cursorInHZone && cursorInVZone && resizing == CursorType.Default)
+                {
+                    activeResizeWindow = winName;
+                    resizing = CursorType.ResizeNSEW;
+                    originalWindow = windowRect;
+                    originalMousePosition = Mouse.screenPos;
+                    SetCursor(CursorType.ResizeEW);
+                }
+                else if (!windowLocked && cursorInVZone && resizing == CursorType.Default)
+                {
+                    activeResizeWindow = winName;
+                    resizing = CursorType.ResizeNS;
+                    originalWindow = windowRect;
+                    originalMousePosition = Mouse.screenPos;
+                    SetCursor(CursorType.ResizeNS);
+                }
+                else if (!windowLocked && cursorInHZone && resizing == CursorType.Default)
+                {
+                    activeResizeWindow = winName;
+                    resizing = CursorType.ResizeEW;
+                    originalWindow = windowRect;
+                    originalMousePosition = Mouse.screenPos;
+                    SetCursor(CursorType.ResizeEW);
+                }
+            }
+            else if (Input.GetMouseButtonUp(0) && resizing != CursorType.Default)
+            {
+                activeResizeWindow = "";
+                resizing = CursorType.Default;
+                SetCursor(CursorType.Default);
+            }
+
+            if (activeResizeWindow == "")
+            {
+                if (cursorInHZone && cursorInVZone && !windowLocked) // Set cursor to ResizeNS if we're hovering over the bottom edge of the window
+                    SetCursor(CursorType.ResizeNSEW);
+                else if (cursorInVZone && !cursorInHZone && !windowLocked) // Set cursor to ResizeNS if we're hovering over the bottom edge of the window
+                    SetCursor(CursorType.ResizeNS);
+                else if (cursorInHZone && !cursorInVZone && !windowLocked) // Set cursor to ResizeNS if we're hovering over the bottom edge of the window
+                    SetCursor(CursorType.ResizeEW);
+
+                else if (!cursorInVZone && !cursorInHZone && resizing == CursorType.Default)
+                    SetCursor(CursorType.Default);
+            }
+            if (activeResizeWindow == winName)
+            {
+
+                if ((resizing == CursorType.ResizeNS || resizing == CursorType.ResizeNSEW) && windowRect.height >= minimumHeight)
+                    windowRect.height = originalWindow.height - (originalMousePosition.y - Mouse.screenPos.y);
+
+                if (windowRect.height < minimumHeight)
+                    windowRect.height = minimumHeight;
+
+                if ((resizing == CursorType.ResizeEW || resizing == CursorType.ResizeNSEW) && windowRect.width >= minimumWidth)
+                    windowRect.width = originalWindow.width - (originalMousePosition.x - Mouse.screenPos.x);
+
+                if (windowRect.width < minimumWidth)
+                    windowRect.width = minimumWidth;
+            }
+        }
+
+        void ResizerUpdate()
+        {
+            if (HighLogic.CurrentGame == null)
+                return;
+            //if (Input.GetKeyDown(HighLogic.CurrentGame.Parameters.CustomParams<KL_13>().ManualEntryKeycode))
+            //{
+            //    onManualEntry();
+            //}
+
+            // Following is the Window resize code
+            if (buttonTextures.Count() == 0)
+            {
+                buttonTextures.Add("CursorResizeNS", GameDatabase.Instance.GetTexture(pluginDir + "/Icons/CursorResizeNS", false));
+                buttonTextures.Add("CursorResizeEW", GameDatabase.Instance.GetTexture(pluginDir + "/Icons/CursorResizeEW", false));
+                buttonTextures.Add("CursorResizeNSEW", GameDatabase.Instance.GetTexture(pluginDir + "/Icons/CursorResizeNSEW", false));
+            }
+
+            updated = false;
+
+            CheckForResize("ExceptionWindow", ref position);
+        }
+
+
+
+        /// <summary>
+        /// Sets the cursor texture
+        /// </summary>
+        /// <param name="type"></param>
+        public void SetCursor(CursorType type)
+        {
+            if (type != CursorType.Default)
+                updated = true;
+            if (type == CursorType.ResizeNS)
+                Cursor.SetCursor((Texture2D)buttonTextures["CursorResizeNS"], new Vector2(11, 11), CursorMode.ForceSoftware);
+            else
+            if (type == CursorType.ResizeEW)
+                Cursor.SetCursor((Texture2D)buttonTextures["CursorResizeEW"], new Vector2(11, 11), CursorMode.ForceSoftware);
+            else
+            if (type == CursorType.ResizeNSEW)
+                Cursor.SetCursor((Texture2D)buttonTextures["CursorResizeNSEW"], new Vector2(11, 11), CursorMode.ForceSoftware);
+            else if (type == CursorType.Default)
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+
+        #endregion
+    }
 }

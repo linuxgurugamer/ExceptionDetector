@@ -1,5 +1,31 @@
 # Changelog  
-  
+
+Linuxgurugamer Changes
+
+
+	Merged in (by hand) ru files from github user @evanisrael
+    Changed .Net version from .Net 3.5 to .Net 4.8
+    Changes for LGG build process
+    Added InstallChecker.cd
+    Replaced Version.cs and Version.tt with AssemblyVersion.tt
+	Move log into the Logs/ExceptionDetector dir  rather than in the Plugins dir
+    Adjusted windows size and positioning
+    Limited window size to 85% of screen height
+    Made window start small and expand to 85% of screen, and then starts using scrollbars
+    Enabled window to hide when entire UI is hidden (F2 key)
+    Added button to reset the lists
+    Added code to not write the stacktrace to the log file if it was empty
+    Added whitelist (if string is in the error condition, it won't be reported)
+    Added resizing to the window, using the right edge, bottom right corner or bottom edge
+    Added toggles to top of window to enable/disable word wrapping and fixed width; fixed width only applies when wordwrap is enabled, it keeps the text width to about 20% of the screen width
+    Added code to save the three toggle setting
+    Added toggle to enable/disable the whitelist
+    Added stock toolbar button to close and open window
+
+TODO
+    Document changes in README
+    Rename csproj file 
+
 | modName    | Exception Detector (EXCD) by godarklight                          |
 | ---------- | ----------------------------------------------------------------- |
 | license    | BSD-2-Clause                                                      |
