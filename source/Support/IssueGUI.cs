@@ -68,8 +68,6 @@ namespace ExceptionDetector
 
         protected void Awake()
         {
-            Debug.Log("ExceptionDetector.IssueGUI.Awake: 1");
-
             try
             {
                 //DontDestroyOnLoad(this);

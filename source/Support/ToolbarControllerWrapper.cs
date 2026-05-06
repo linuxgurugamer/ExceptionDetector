@@ -25,7 +25,7 @@ public class RegisterToolbar : MonoBehaviour
 
             if (tcType == null)
             {
-                Debug.Log("[RegisterToolbarControllerMod] ToolbarController not installed, skipping RegisterMod");
+                //Debug.Log("[RegisterToolbarControllerMod] ToolbarController not installed, skipping RegisterMod");
                 return;
             }
 
@@ -45,7 +45,7 @@ public class RegisterToolbar : MonoBehaviour
 
             if (registerMod == null)
             {
-                Debug.LogWarning("[RegisterToolbarControllerMod] ToolbarControl.RegisterMod method not found");
+                //Debug.LogWarning("[RegisterToolbarControllerMod] ToolbarControl.RegisterMod method not found");
                 return;
             }
 
@@ -58,7 +58,7 @@ public class RegisterToolbar : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("[RegisterToolbarControllerMod] ToolbarController RegisterMod failed: " + ex);
+            //Debug.LogWarning("[RegisterToolbarControllerMod] ToolbarController RegisterMod failed: " + ex);
         }
     }
 }
@@ -193,7 +193,7 @@ public class ToolbarWrapper
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("[ToolbarWrapper] ToolbarController failed, falling back: " + ex);
+            //Debug.LogWarning("[ToolbarWrapper] ToolbarController failed, falling back: " + ex);
             return false;
         }
     }
