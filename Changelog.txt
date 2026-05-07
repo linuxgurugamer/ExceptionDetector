@@ -27,8 +27,14 @@ Changelog
     Removed toggle for fixed width
     Added code to save window position
 
-TODO
-    Document changes in README
+    Added an Alwayslist, to always show specific strings
+    Added an edit window for the alwayslist and whitelist
+    Added toggle to use alternate skin
+
+
+    ***********************************
+
+1.4.0
 
 | modName    | Exception Detector (EXCD) by godarklight                          |
 | ---------- | ----------------------------------------------------------------- |

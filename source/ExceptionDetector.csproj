@@ -7,8 +7,8 @@
     <ProjectGuid>{1074C8AF-C3A2-440E-A827-F06B5F51764C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExceptionDetector</RootNamespace>
-    <AssemblyName>ExceptionDetector</AssemblyName>
+    <RootNamespace>ExceptionDetectorEnhanced</RootNamespace>
+    <AssemblyName>ExceptionDetectorEnhanced</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -63,7 +63,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExceptionDetector.cs" />
+    <Compile Include="DictionaryEditorWindow.cs" />
+    <Compile Include="ExceptionDetectorEnhanced.cs" />
     <Compile Include="InstallChecker.cs" />
     <Compile Include="Support\CBTWrapper.cs" />
     <Compile Include="Support\Config.cs" />

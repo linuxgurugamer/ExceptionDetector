@@ -1,7 +1,0 @@
-#
-# Exception Detector Whitelist file
-#
-# The full text on each line is used, if any exception found with a matching substring
-# gets ignored
-Texture isn't eligible for DXT compression
-WheelCollider requires an attached Rigidbody to function

@@ -1,4 +1,5 @@
-﻿using KSP.UI.Screens;
+﻿using JetBrains.Annotations;
+using KSP.UI.Screens;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -7,8 +8,8 @@ using UnityEngine;
 [KSPAddon(KSPAddon.Startup.MainMenu, true)]
 public class RegisterToolbar : MonoBehaviour
 {
-    internal const string MODID = "ExceptionDetector";
-    internal const string MODNAME = "ExceptionDetector";
+    internal const string MODID = "ExceptionDetectorEnhanced";
+    internal const string MODNAME = "ExceptionDetectorEnhanced";
 
     void Start()
     {
@@ -65,6 +66,8 @@ public class RegisterToolbar : MonoBehaviour
 
 public class ToolbarWrapper
 {
+    public static bool toolbarControllerAvailable = false;
+
     private readonly MonoBehaviour host;
     private readonly Action onTrue;
     private readonly Action onFalse;
@@ -105,7 +108,7 @@ public class ToolbarWrapper
         }
     }
 
-    public ToolbarWrapper(
+    public ToolbarWrapper(        
         MonoBehaviour host,
         Action onTrue,
         Action onFalse,
@@ -119,7 +122,7 @@ public class ToolbarWrapper
         this.host = host;
         this.onTrue = onTrue;
         this.onFalse = onFalse;
-
+        toolbarControllerAvailable = true;
         if (!TryCreateToolbarController(
                 scenes,
                 toolbarNamespace,
@@ -131,6 +134,7 @@ public class ToolbarWrapper
                 tooltip))
         {
             CreateStockButton(largeToolbarIconActive, scenes);
+            toolbarControllerAvailable = false;
         }
     }
 
@@ -313,11 +317,11 @@ public class ToolbarWrapper
 
     public void Destroy()
     {
-        if (UsingToolbarController && toolbarControl != null)
-        {
-            UnityEngine.Object.Destroy(toolbarControl);
-            toolbarControl = null;
-        }
+        //if (UsingToolbarController && toolbarControl != null)
+        //{
+        //    UnityEngine.Object.Destroy(toolbarControl);
+        //    toolbarControl = null;
+        //}
 
         if (stockButton != null && ApplicationLauncher.Instance != null)
         {

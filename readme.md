@@ -23,12 +23,17 @@ Toolbar button
 Available Toggles
 	Word Wrap			If enabled, log lines will wrap in the window
 	Bold				If enabled, log lines will be bold text
-	Use Whitelist		If string is in the error condition, it won't be reported
+	Use Whitelist		use the Whitelist if enabled
+	use Alwayslist		Use the Alwayslist if enabled
+	Use Alt Skin		Uses an alternate skin if enabled
+
+Available Button
+	Edit lists			Opens a window where the whitelist and alwayslist can be edited
 
 Resizable Window
 	The window is resizable, using the right edge, bottom right corner or bottom edge
 
 
-The whitelist is used to ignore various error messages. It's a text file, located:
-	ExceptionDetector/PluginData/whitelist.txt
+The whitelist is used to ignore various error messages. The whitelist is stored in the settings.cfg
+the alwaysList is used to specify strings which should always be found, also stored in the settings.cfg
 

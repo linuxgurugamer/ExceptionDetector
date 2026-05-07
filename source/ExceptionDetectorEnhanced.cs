@@ -26,16 +26,15 @@
 */
 #endregion
 
+using KSP.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Linq;
 using UnityEngine;
-using KSP.Localization;
 
-namespace ExceptionDetector
+namespace ExceptionDetectorEnhanced
 {
     //TODO
     // <summary>
@@ -46,13 +45,13 @@ namespace ExceptionDetector
     //	debug log switches make no sense anymore
     // </summary>
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
-    public class ExceptionDetector : MonoBehaviour
+    public class ExceptionDetectorEnhanced : MonoBehaviour
     {
         #region needscleaned
         //===Exception storage===
         //Key: Class name, Value: StackInfo
         private static Dictionary<string, StackInfo> classCache = new Dictionary<string, StackInfo>();
-       
+
         //Key: DLL name, Value: [Key: Class.Method name, Value: Number of throws]
         private static Dictionary<string, Dictionary<StackInfo, int>> methodThrows = new Dictionary<string, Dictionary<StackInfo, int>>();
         //Time of all the throws
@@ -75,8 +74,9 @@ namespace ExceptionDetector
         private static string prvConditionStatement = String.Empty;
 
         static internal Dictionary<string, string> WhitelistValues = new Dictionary<string, string>();
+        static internal Dictionary<string, string> AlwayslistValues = new Dictionary<string, string>();
 
-        private static readonly string _assemblyPath = Path.GetDirectoryName(typeof(ExceptionDetector).Assembly.Location);
+        private static readonly string _assemblyPath = Path.GetDirectoryName(typeof(ExceptionDetectorEnhanced).Assembly.Location);
 
         private static readonly string directory = KSPUtil.ApplicationRootPath + "/Logs/ExceptionDetector/";
         internal static String SettingsFile { get; } = Path.Combine(_assemblyPath, "../PluginData/settings.cfg");
@@ -85,7 +85,7 @@ namespace ExceptionDetector
         internal static IssueGUI fiGui;
         internal static Rect position; //  = new Rect(Screen.width * .8f, Screen.height * .1f, Screen.width * .5f, Screen.height * 0.25f);
 
-        public static ExceptionDetector Instance { get; private set; }
+        public static ExceptionDetectorEnhanced Instance { get; private set; }
         internal static string strMessage = String.Empty;
         #endregion
 
@@ -98,6 +98,8 @@ namespace ExceptionDetector
         //public static bool FixedWidth { get; set; } = true;
         public static bool Bold { get; set; } = true;
         public static bool UseWhitelist { get; set; } = true;
+        public static bool UseAlwayslist { get; set; } = true;
+        public static bool UseAltSkin { get; set; } = true;
 
 
         #endregion
@@ -170,6 +172,8 @@ namespace ExceptionDetector
 
         public void OnGUI()
         {
+            if (!ExceptionDetectorEnhanced.UseAltSkin)
+                GUI.skin = HighLogic.Skin;
             try
             {
                 if (fiGui != null) fiGui.OnGUI();
@@ -193,7 +197,20 @@ namespace ExceptionDetector
 
         public static void HandleLogEntry(string condition, string stackTrace, LogType logType)
         {
-            if (ExceptionDetector.UseWhitelist)
+            bool pass = false;
+            if (ExceptionDetectorEnhanced.UseAlwayslist)
+            {
+                foreach (var w in AlwayslistValues.Values)
+                {
+                    if (condition.Contains(w))
+                    {
+                        pass = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!pass && ExceptionDetectorEnhanced.UseWhitelist)
             {
                 foreach (var w in WhitelistValues.Values)
                 {
@@ -201,7 +218,7 @@ namespace ExceptionDetector
                         return;
                 }
             }
-            
+
             //WriteLog("\n<<<<<<<< " + stackLogTick + "\t" + DoublePassValues.Count + "\t" + prvConditionStatement);
             string stkMsg = String.Empty;
             bool doublePass = CheckPass(condition, DoublePassValues);
@@ -480,7 +497,7 @@ namespace ExceptionDetector
         {
             if (!String.IsNullOrEmpty(strMessage))
             {
-                FileStream objFilestream = new FileStream(ExceptionDetector.LogFile, FileMode.Append, FileAccess.Write);
+                FileStream objFilestream = new FileStream(ExceptionDetectorEnhanced.LogFile, FileMode.Append, FileAccess.Write);
                 StreamWriter objStreamWriter = new StreamWriter((Stream)objFilestream);
                 objStreamWriter.AutoFlush = true;
                 objStreamWriter.WriteLine(strMessage);
@@ -491,7 +508,7 @@ namespace ExceptionDetector
 
         private static void InitLog()
         {
-            FileStream objFilestream = new FileStream(ExceptionDetector.LogFile, FileMode.Create, FileAccess.Write);
+            FileStream objFilestream = new FileStream(ExceptionDetectorEnhanced.LogFile, FileMode.Create, FileAccess.Write);
             StreamWriter objStreamWriter = new StreamWriter((Stream)objFilestream);
             objStreamWriter.AutoFlush = true;
             objStreamWriter.WriteLine(DateTime.Now);
@@ -503,7 +520,7 @@ namespace ExceptionDetector
 
         private static void logTheMessage(string condition, string stackTrace, LogType logType)
         {
-            if (ExceptionDetector.FullLog)
+            if (ExceptionDetectorEnhanced.FullLog)
             {
                 if (condition != "\n") WriteLog(Localizer.Format("#EXCD-07") + "\t" + condition);
                 if (stackTrace != "\n") WriteLog(Localizer.Format("EXCD-08") + "\t" + stackTrace + "\nLogType:\t" + logType);

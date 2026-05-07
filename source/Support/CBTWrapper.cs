@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace ExceptionDetector.Support
+namespace ExceptionDetectorEnhanced.Support
 {
     internal static class CBTWrapper
     {

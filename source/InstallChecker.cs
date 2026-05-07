@@ -14,7 +14,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace ExceptionDetector
+namespace ExceptionDetectorEnhanced
 {
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     internal class Startup : MonoBehaviour
@@ -40,8 +40,8 @@ namespace ExceptionDetector
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class InstallChecker : MonoBehaviour
     {
-        private const string MODNAME = "ExceptionDetector";
-        private const string FOLDERNAME = "ExceptionDetector";
+        private const string MODNAME = "ExceptionDetectorEnhanced";
+        private const string FOLDERNAME = "ExceptionDetectorEnhanced";
         private const string EXPECTEDPATH = FOLDERNAME + "/Plugins";
 
         protected void Start()

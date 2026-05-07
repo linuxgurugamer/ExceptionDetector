@@ -1,14 +1,14 @@
 ﻿using KSP.UI.Screens;
 using UnityEngine;
+using static GameEvents;
 
-namespace ExceptionDetector
+namespace ExceptionDetectorEnhanced
 {
     [KSPAddon(KSPAddon.Startup.AllGameScenes, true)]
     public class ToolbarButton : MonoBehaviour
     {
         internal const string MODID = "ED_NS";
-        internal const string MODNAME = "ExceptionDetector";
-        //static IssueGUI instance = null;
+        internal const string MODNAME = "ExceptionDetectorEnhanced";
         public static ToolbarButton toolbarButton = null;
 
         private static GameObject go;
@@ -16,38 +16,47 @@ namespace ExceptionDetector
         void Awake()
         {
             GameEvents.onGUIApplicationLauncherReady.Add(OnAppLauncherReady);
+            GameEvents.onGameSceneSwitchRequested.Add(onGameSceneSwitchRequested);
             DontDestroyOnLoad(this);
             toolbarButton = this;
         }
 
-        private static readonly string TestsPassingIconLocation = "ExceptionDetector/Icons/ed";
+        void onGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> data)
+        {
+            toolbar.Destroy();
+        }
 
-        private ApplicationLauncherButton button;
+        private static readonly string TestsPassingIconLocation = "ExceptionDetectorEnhanced/Icons/ed";
+
         private Texture TestsPassingIcon;
 
         private ToolbarWrapper toolbar;
         private void OnAppLauncherReady()
         {
+            Debug.Log("ExceptionDetector OnAppLauncherReady 1");
             TestsPassingIcon = GameDatabase.Instance.GetTexture(TestsPassingIconLocation, false);
 
-            if (button != null)
+            //if (button != null)
+            //{
+            //    ApplicationLauncher.Instance.RemoveModApplication(button);
+            //    button = null;
+            //}
+            if (toolbar == null || ToolbarWrapper.toolbarControllerAvailable == false)
             {
-                ApplicationLauncher.Instance.RemoveModApplication(button);
-                button = null;
+                Debug.Log("ExceptionDetector OnAppLauncherReady 2");
+                toolbar = new ToolbarWrapper(
+                    this,
+                    OnTrue, OnFalse,
+                    ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.SPACECENTER |
+                    ApplicationLauncher.AppScenes.MAPVIEW | ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.TRACKSTATION,
+                    MODNAME,
+                    MODID,
+                    TestsPassingIconLocation,
+                    TestsPassingIconLocation,
+                    "Exception Detector Enhanced"
+                    );
             }
-            toolbar = new ToolbarWrapper(
-                this,
-                OnTrue, OnFalse,
-                ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.SPACECENTER |
-                ApplicationLauncher.AppScenes.MAPVIEW | ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.TRACKSTATION,
-                MODNAME,
-                MODID,
-                TestsPassingIconLocation,
-                TestsPassingIconLocation,
-                "Exception Detector"
-                );
         }
-
 
         internal void OnTrue()
         {
@@ -57,16 +66,16 @@ namespace ExceptionDetector
             }
             if (!IssueGUI.isActive)
             {
-                ExceptionDetector.fiGui = go.AddComponent<IssueGUI>();
+                ExceptionDetectorEnhanced.fiGui = go.AddComponent<IssueGUI>();
             }
         }
 
         internal void OnFalse()
         {
-            if (ExceptionDetector.fiGui != null)
+            if (ExceptionDetectorEnhanced.fiGui != null)
             {
-                Destroy(ExceptionDetector.fiGui);
-                ExceptionDetector.fiGui = null;
+                Destroy(ExceptionDetectorEnhanced.fiGui);
+                ExceptionDetectorEnhanced.fiGui = null;
                 IssueGUI.isActive = false;
             }
         }

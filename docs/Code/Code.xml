@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>ExceptionDetector</name>
+        <name>ExceptionDetectorEnhanced</name>
     </assembly>
     <members>
-        <member name="T:ExceptionDetector.IssueGUI.CursorType">
+        <member name="T:ExceptionDetectorEnhanced.IssueGUI.CursorType">
             <summary>
             Defines available cursor types
             </summary>
         </member>
-        <member name="M:ExceptionDetector.IssueGUI.SetCursor(ExceptionDetector.IssueGUI.CursorType)">
+        <member name="M:ExceptionDetectorEnhanced.IssueGUI.SetCursor(ExceptionDetectorEnhanced.IssueGUI.CursorType)">
             <summary>
             Sets the cursor texture
             </summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace ExceptionDetector
+namespace ExceptionDetectorEnhanced
 {
     public class Config
     {
@@ -13,9 +13,12 @@ namespace ExceptionDetector
         private static string _singlePass = "SinglePass";
         private static string _doublePass = "DoublePass";
         private static string _whitelist = "Whitelist";
+        private static string _alwayslist = "Alwayslist";
         private static string _wordwrap = "WordWrap";
-        //private static string _fixedwidth = "FixedWidth";
         private static string _usewhitelist = "UseWhitelist";
+        private static string _usealwayslist = "UseAlwayslist";
+        private static string _usealtskin = "UseAltSkin";
+
         private static string _bold = "Bold";
 
         private static string _x = "X";
@@ -28,13 +31,13 @@ namespace ExceptionDetector
         {
             try
             {
-                if (File.Exists(ExceptionDetector.SettingsFile))
+                if (File.Exists(ExceptionDetectorEnhanced.SettingsFile))
                 {
 
-                    var node = ConfigNode.Load(ExceptionDetector.SettingsFile);
+                    var node = ConfigNode.Load(ExceptionDetectorEnhanced.SettingsFile);
                     if (node == null) return;
 
-                    var root = node.GetNode("ExceptionDetector");
+                    var root = node.GetNode("ExceptionDetectorEnhanced");
                     if (root == null) return;
 
                     var settings = root.GetNode("Config");
@@ -42,53 +45,63 @@ namespace ExceptionDetector
 
                     var singleNode = settings.GetNode(_singlePass);
                     if (singleNode != null)
-                        ConvertToDictionary(singleNode, ExceptionDetector.SinglePassValues);
+                        ConvertToDictionary(singleNode, ExceptionDetectorEnhanced.SinglePassValues);
 
                     var doubleNode = settings.GetNode(_doublePass);
                     if (doubleNode != null)
-                        ConvertToDictionary(doubleNode, ExceptionDetector.DoublePassValues);
+                        ConvertToDictionary(doubleNode, ExceptionDetectorEnhanced.DoublePassValues);
 
                     var whitelistNode = settings.GetNode(_whitelist);
                     if (whitelistNode != null)
-                        ConvertToDictionary(whitelistNode, ExceptionDetector.WhitelistValues);
+                        ConvertToDictionary(whitelistNode, ExceptionDetectorEnhanced.WhitelistValues);
+
+                    var alwayslistNode = settings.GetNode(_alwayslist);
+                    if (alwayslistNode != null)
+                        ConvertToDictionary(alwayslistNode, ExceptionDetectorEnhanced.AlwayslistValues);
 
                     var set = settings.GetValue(_showFullLog);
-                    if (bool.TryParse(set, out var settf)) ExceptionDetector.FullLog = settf;
+                    if (bool.TryParse(set, out var settf)) ExceptionDetectorEnhanced.FullLog = settf;
 
                     var knowns = settings.GetValue(_hideKnowns);
-                    if (bool.TryParse(knowns, out var knowntf)) ExceptionDetector.HideKnowns = knowntf;
+                    if (bool.TryParse(knowns, out var knowntf)) ExceptionDetectorEnhanced.HideKnowns = knowntf;
 
                     var shInfo = settings.GetValue(_showInfoMessage);
-                    if (bool.TryParse(shInfo, out var llmtf)) ExceptionDetector.ShowInfoMessage = llmtf;
+                    if (bool.TryParse(shInfo, out var llmtf)) ExceptionDetectorEnhanced.ShowInfoMessage = llmtf;
 
                     var wordwrap = settings.GetValue(_wordwrap);
-                    if (bool.TryParse(wordwrap, out var wrap)) ExceptionDetector.WordWrap = wrap;
+                    if (bool.TryParse(wordwrap, out var wrap)) ExceptionDetectorEnhanced.WordWrap = wrap;
 
                     var x = settings.GetValue(_x);
                     var y = settings.GetValue(_y);
                     var width = settings.GetValue(_width);
                     var height = settings.GetValue(_height);
 
-                    if (float.TryParse(x, out var X)) ExceptionDetector.position.x = X;
-                    if (float.TryParse(y, out var Y)) ExceptionDetector.position.y = Y;
-                    if (float.TryParse(width, out var Width)) ExceptionDetector.position.width = Width;
-                    if (float.TryParse(height, out var Height)) ExceptionDetector.position.height = Height;
+                    if (float.TryParse(x, out var X)) ExceptionDetectorEnhanced.position.x = X;
+                    if (float.TryParse(y, out var Y)) ExceptionDetectorEnhanced.position.y = Y;
+                    if (float.TryParse(width, out var Width)) ExceptionDetectorEnhanced.position.width = Width;
+                    if (float.TryParse(height, out var Height)) ExceptionDetectorEnhanced.position.height = Height;
 #if false
 					var fixedwidth = settings.GetValue(_fixedwidth);
-                    if (bool.TryParse(fixedwidth, out var fw)) ExceptionDetector.Bold = fw;
+                    if (bool.TryParse(fixedwidth, out var fw)) ExceptionDetectorEnhanced.Bold = fw;
 #endif
                     var bold = settings.GetValue(_bold);
-                    if (bool.TryParse(bold, out var fw)) ExceptionDetector.Bold = fw;
+                    if (bool.TryParse(bold, out var fw)) ExceptionDetectorEnhanced.Bold = fw;
 
                     var usewhitelist = settings.GetValue(_usewhitelist);
-                    if (bool.TryParse(usewhitelist, out var uwl)) ExceptionDetector.UseWhitelist = uwl;
+                    if (bool.TryParse(usewhitelist, out var uwl)) ExceptionDetectorEnhanced.UseWhitelist = uwl;
+
+                    var usealwayslist = settings.GetValue(_usealwayslist);
+                    if (bool.TryParse(usealwayslist, out var ual)) ExceptionDetectorEnhanced.UseAlwayslist = ual;
+
+                    var useAltSkin = settings.GetValue(_usealtskin);
+                    if (bool.TryParse(useAltSkin, out var uas)) ExceptionDetectorEnhanced.UseAltSkin = uas;
 
                 }
                 Save();
             }
             catch (Exception ex)
             {
-                ExceptionDetector.WriteLog(ex.ToString());
+                ExceptionDetectorEnhanced.WriteLog(ex.ToString());
             }
         }
 
@@ -117,28 +130,33 @@ namespace ExceptionDetector
             try
             {
                 var node = new ConfigNode();
-                var root = node.AddNode("ExceptionDetector");
+                var root = node.AddNode("ExceptionDetectorEnhanced");
                 var settings = root.AddNode("Config");
-                settings.AddValue(_showFullLog, ExceptionDetector.FullLog);
-                settings.AddValue(_hideKnowns, ExceptionDetector.HideKnowns);
-                settings.AddValue(_showInfoMessage, ExceptionDetector.ShowInfoMessage);
-                var sNode = settings.AddNode(ConvertFromDictionary(_singlePass, ExceptionDetector.SinglePassValues));
-                var dNode = settings.AddNode(ConvertFromDictionary(_doublePass, ExceptionDetector.DoublePassValues));
+                settings.AddValue(_showFullLog, ExceptionDetectorEnhanced.FullLog);
+                settings.AddValue(_hideKnowns, ExceptionDetectorEnhanced.HideKnowns);
+                settings.AddValue(_showInfoMessage, ExceptionDetectorEnhanced.ShowInfoMessage);
+                var sNode = settings.AddNode(ConvertFromDictionary(_singlePass, ExceptionDetectorEnhanced.SinglePassValues));
+                var dNode = settings.AddNode(ConvertFromDictionary(_doublePass, ExceptionDetectorEnhanced.DoublePassValues));
 
-                settings.AddValue(_wordwrap, ExceptionDetector.WordWrap);
-                settings.AddValue(_bold, ExceptionDetector.Bold);
-                settings.AddValue(_usewhitelist, ExceptionDetector.UseWhitelist);
+                var wnode = settings.AddNode(ConvertFromDictionary(_whitelist, ExceptionDetectorEnhanced.WhitelistValues));
+                var anode = settings.AddNode(ConvertFromDictionary(_alwayslist, ExceptionDetectorEnhanced.AlwayslistValues));
 
-                settings.AddValue(_x, ExceptionDetector.fiGui.position.x);
-                settings.AddValue(_y, ExceptionDetector.fiGui.position.y);
-                settings.AddValue(_width, ExceptionDetector.fiGui.position.width);
-                settings.AddValue(_height, ExceptionDetector.fiGui.position.height);
+                settings.AddValue(_wordwrap, ExceptionDetectorEnhanced.WordWrap);
+                settings.AddValue(_bold, ExceptionDetectorEnhanced.Bold);
+                settings.AddValue(_usewhitelist, ExceptionDetectorEnhanced.UseWhitelist);
+                settings.AddValue(_usealwayslist, ExceptionDetectorEnhanced.UseAlwayslist);
+                settings.AddValue(_usealtskin, ExceptionDetectorEnhanced.UseAltSkin);
 
-                node.Save(ExceptionDetector.SettingsFile);
+                settings.AddValue(_x, ExceptionDetectorEnhanced.fiGui.position.x);
+                settings.AddValue(_y, ExceptionDetectorEnhanced.fiGui.position.y);
+                settings.AddValue(_width, ExceptionDetectorEnhanced.fiGui.position.width);
+                settings.AddValue(_height, ExceptionDetectorEnhanced.fiGui.position.height);
+
+                node.Save(ExceptionDetectorEnhanced.SettingsFile);
             }
             catch (Exception ex)
             {
-                ExceptionDetector.WriteLog(ex.ToString());
+                ExceptionDetectorEnhanced.WriteLog(ex.ToString());
             }
         }
     }

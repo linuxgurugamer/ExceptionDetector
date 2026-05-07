@@ -23,7 +23,7 @@ rem    but not always
 rem LICENSE is the license file
 rem README is the readme file
 
-set GAMEDIR=ExceptionDetector
+set GAMEDIR=ExceptionDetectorEnhanced
 set GAMEDATA="GameData\"
 set VERSIONFILE=%GAMEDIR%.version
 set LICENSE=BSD-2-Clause.txt
