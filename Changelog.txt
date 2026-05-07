@@ -3,7 +3,8 @@ Changelog
 1.5.0
     Adoption by Linuxgurugamer
 
-	Merged in (by hand) ru files from github user @evanisrael
+	Removed all non-code-related files from @undefined version
+    Merged in (by hand) ru files from github user @evanisrael
     Changed .Net version from .Net 3.5 to .Net 4.8
     Changes for LGG build process
     Added InstallChecker.cd
@@ -18,19 +19,38 @@ Changelog
     Added whitelist (if string is in the error condition, it won't be reported)
     Added resizing to the window, using the right edge, bottom right corner or bottom edge
     Added toggles to top of window to enable/disable word wrapping and fixed width; fixed width only applies when wordwrap is enabled, it keeps the text width to about 20% of the screen width
-    Added code to save the three toggle setting
-    Added toggle to enable/disable the whitelist
+    Added code to save the toggle settings
     Added stock toolbar button to close and open window
     Added optional support for ClickThroughBlocker.  If installed, it will be used
     Added optional support for ToolbarController.  If installed, it will be used
     Added toggle to show exceptions either bold or normal
-    Removed toggle for fixed width
     Added code to save window position
 
     Added an Alwayslist, to always show specific strings
     Added an edit window for the alwayslist and whitelist
     Added toggle to use alternate skin
 
+
+    ***********************************
+    Mod History
+
+
+    The original version of this mod was created by @godarklight, original thread is: 
+    https://forum.kerbalspaceprogram.com/index.php?/topic/98658-*.  
+    The license he chose for it was the Unlicense
+
+    It was adopted by @SlimJimDodger, thread is here: 
+    https://forum.kerbalspaceprogram.com/index.php?/topic/181576-14x-exceptiondetectorupdated/.  
+    He kept the same Unlicense license
+
+    It was then adopted by @zer0Kerbal, his thread is here: 
+    https://forum.kerbalspaceprogram.com/topic/207511-112xexception-detector-v1300-adoption-edition-01-apr-2022/#comment-4512860. 
+    This version was never published to CKAN and is NOT in Spacedock, he only uses Curseforge. 
+    His version also has some issues which made it difficult for me to use, so I've made my own changes to it
+    I was originally going to push my changes back to his repo, but the number of
+    changes are very extensive (see the following list of changes) to the point that 
+    it was not feasable to push them back.  
+    He changed the license to the BSD-2 .  This license has also been called the “Simplified BSD License” and the “FreeBSD License”.
 
     ***********************************
 

@@ -37,6 +37,7 @@
 3:ExceptionDetectorEnhanced.version,GameData/ExceptionDetectorEnhanced
 3:LICENSE,GameData/ExceptionDetectorEnhanced
 3:readme.md,GameData/ExceptionDetectorEnhanced
+3:Changelog.txt
 
 
 
