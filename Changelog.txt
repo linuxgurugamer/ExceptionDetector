@@ -1,5 +1,8 @@
 Changelog  
 
+1.5.1.1
+    Added checks in Save and logging module to prevent NullReferences if any of the lists are empty
+
 1.5.1
     Added Settings page
     Moved toggles to settings page

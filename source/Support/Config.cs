@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace ExceptionDetectorEnhanced
 {
@@ -137,11 +135,21 @@ namespace ExceptionDetectorEnhanced
                 settings.AddValue(_showFullLog, ExceptionDetectorEnhanced.FullLog);
                 settings.AddValue(_hideKnowns, ExceptionDetectorEnhanced.HideKnowns);
                 settings.AddValue(_showInfoMessage, ExceptionDetectorEnhanced.ShowInfoMessage);
-                var sNode = settings.AddNode(ConvertFromDictionary(_singlePass, ExceptionDetectorEnhanced.SinglePassValues));
-                var dNode = settings.AddNode(ConvertFromDictionary(_doublePass, ExceptionDetectorEnhanced.DoublePassValues));
 
-                var wnode = settings.AddNode(ConvertFromDictionary(_whitelist, ExceptionDetectorEnhanced.WhitelistValues));
-                var anode = settings.AddNode(ConvertFromDictionary(_alwayslist, ExceptionDetectorEnhanced.AlwayslistValues));
+                var spv = ConvertFromDictionary(_singlePass, ExceptionDetectorEnhanced.SinglePassValues);
+                var dpv = ConvertFromDictionary(_doublePass, ExceptionDetectorEnhanced.DoublePassValues);
+                var wlv = ConvertFromDictionary(_whitelist, ExceptionDetectorEnhanced.WhitelistValues);
+                var alv = ConvertFromDictionary(_alwayslist, ExceptionDetectorEnhanced.AlwayslistValues);
+
+                if (spv != null) settings.AddNode(spv);
+                if (dpv != null) settings.AddNode(dpv);
+                if (wlv != null) settings.AddNode(wlv);
+                if (alv != null) settings.AddNode(alv);
+
+                //var sNode = settings.AddNode(ConvertFromDictionary(_singlePass, ExceptionDetectorEnhanced.SinglePassValues));
+                //var dNode = settings.AddNode(ConvertFromDictionary(_doublePass, ExceptionDetectorEnhanced.DoublePassValues));
+                //var wnode = settings.AddNode(ConvertFromDictionary(_whitelist, ExceptionDetectorEnhanced.WhitelistValues));
+                //var anode = settings.AddNode(ConvertFromDictionary(_alwayslist, ExceptionDetectorEnhanced.AlwayslistValues));
 
                 settings.AddValue(_wordwrap, ExceptionDetectorEnhanced.WordWrap);
                 settings.AddValue(_bold, ExceptionDetectorEnhanced.Bold);
