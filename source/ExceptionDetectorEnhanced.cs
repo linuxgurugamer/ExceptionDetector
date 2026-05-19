@@ -212,7 +212,7 @@ namespace ExceptionDetectorEnhanced
             {
                 foreach (var w in AlwayslistValues.Values)
                 {
-                    if (w != null && condition.Contains(w))
+                    if (w != null && w != "" && condition.Contains(w))
                     {
                         pass = true;
                         break;
@@ -224,7 +224,7 @@ namespace ExceptionDetectorEnhanced
             {
                 foreach (var w in WhitelistValues.Values)
                 {
-                    if (w != null && condition.Contains(w))
+                    if (w != null && w != "" && condition.Contains(w))
                         return;
                 }
             }
